@@ -30,8 +30,8 @@
           "required": true
         },
         {
-          "name": "secret",
-          "title": "Secret",
+          "name": "rpcSecret",
+          "title": "RPC Secret",
           "description": "Secret key for authenticating with the Aria2 server",
           "type": "password",
           "placeholder": "Secret Key",
