@@ -11,7 +11,33 @@
       "name": "index",
       "title": "aria2",
       "description": "inThe Aria2 extension for Raycast enables users to manage Aria2 downloads directly from the Raycast command bar.",
-      "mode": "view"
+      "mode": "view",
+      "preferences": [
+        {
+          "name": "hostname",
+          "title": "Host Name",
+          "description": "Hostname of the Aria2 server",
+          "type": "textfield",
+          "placeholder": "localhost",
+          "required": true
+        },
+        {
+          "name": "port",
+          "title": "Port",
+          "description": "Port number of the Aria2 server",
+          "type": "textfield",
+          "placeholder": "6800",
+          "required": true
+        },
+        {
+          "name": "secret",
+          "title": "Secret",
+          "description": "Secret key for authenticating with the Aria2 server",
+          "type": "password",
+          "placeholder": "Secret Key",
+          "required": true
+        }
+      ]
     }
   ],
   "dependencies": {
