@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { DownloadStatus, DownloadItem, defaultPreferences } from "./types";
 import { EmptyView } from "./components";
-import { ActionPanel, Icon, List } from "@raycast/api";
+import { List } from "@raycast/api";
 import Aria2Service from "./utils/Aria2Service";
 import { getDownloadIcon, formatSize, formatProgress, formatRemainingTime, formatSpeed } from "./utils/utils";
 
@@ -94,22 +94,33 @@ export default function Command() {
           id={downloadItem.gid}
           title={downloadItem.bittorrent?.info?.name ?? downloadItem.files?.[0]?.path ?? downloadItem.gid}
           subtitle={{ tooltip: "File Size", value: `💾${formatSize(downloadItem.totalLength)}` }}
-          accessories={[
-            {
-              tooltip: "Progress",
-              text: ` ${formatProgress(downloadItem.completedLength, downloadItem.totalLength)}`,
-              icon: "⏳",
-            },
-            {
-              tooltip: "Remaining Time",
-              text: ` ${formatRemainingTime(
-                (parseFloat(downloadItem.totalLength) - parseFloat(downloadItem.completedLength)) /
-                  parseFloat(downloadItem.downloadSpeed)
-              )}`,
-              icon: "🕐",
-            },
-            { tooltip: "Download Speed", text: ` ${formatSpeed(downloadItem.downloadSpeed)}`, icon: "🚀" },
-          ]}
+          accessories={
+            downloadItem.status === "active"
+              ? [{ tooltip: "Download Speed", text: ` ${formatSpeed(downloadItem.downloadSpeed)}`, icon: "🚀" }]
+              : downloadItem.status === "complete"
+              ? [
+                  {
+                    tooltip: "Progress",
+                    text: ` ${formatProgress(downloadItem.completedLength, downloadItem.totalLength)}`,
+                    icon: "⏳",
+                  },
+                ]
+              : [
+                  {
+                    tooltip: "Progress",
+                    text: ` ${formatProgress(downloadItem.completedLength, downloadItem.totalLength)}`,
+                    icon: "⏳",
+                  },
+                  {
+                    tooltip: "Remaining Time",
+                    text: `${formatRemainingTime(
+                      (parseFloat(downloadItem.totalLength) - parseFloat(downloadItem.completedLength)) /
+                        parseFloat(downloadItem.downloadSpeed)
+                    )}`,
+                    icon: "🕐",
+                  },
+                ]
+          }
         />
       ))}
     </List>
