@@ -1,6 +1,6 @@
 import { Action, Icon } from "@raycast/api";
 
-function DeleteDownloadAction(props: { onDelete: () => void }) {
+function DeleteTaskAction(props: { onDelete: () => void }) {
   return (
     <Action
       icon={Icon.Trash}
@@ -11,4 +11,4 @@ function DeleteDownloadAction(props: { onDelete: () => void }) {
   );
 }
 
-export default DeleteDownloadAction;
+export default DeleteTaskAction;

@@ -1,6 +1,4 @@
-import { getPreferenceValues } from "@raycast/api";
-
-enum DownloadStatus {
+enum Status {
   Active = "active",
   Waiting = "waiting",
   Paused = "paused",
@@ -9,9 +7,18 @@ enum DownloadStatus {
   Removed = "removed",
 }
 
-interface DownloadItem {
+interface File {
+  completedLength: string;
+  index: string;
+  length: string;
+  path: string;
+  selected: string;
+  uris: any[];
+}
+
+interface Download {
   gid: string;
-  status: DownloadStatus;
+  status: Status;
   totalLength: string;
   completedLength: string;
   uploadLength: string;
@@ -28,14 +35,7 @@ interface DownloadItem {
   following?: string;
   belongsTo?: string;
   dir?: string;
-  files?: {
-    completedLength: string;
-    index: string;
-    length: string;
-    path: string;
-    selected: string;
-    uris: any[];
-  }[];
+  files?: File[];
   bittorrent?: {
     announceList: string[][];
     info: {
@@ -45,17 +45,24 @@ interface DownloadItem {
   };
 }
 
-interface Preferences {
-  hostname: string;
-  port: string;
-  rpcSecret: string;
+interface Task {
+  gid: string;
+  fileName: string;
+  fileSize: string;
+  progress: string;
+  remainingTime?: string;
+  downloadSpeed?: string;
+  status: Status;
 }
 
-const defaultPreferences: Preferences = {
-  hostname: "192.168.2.1",
-  port: "6800",
-  rpcSecret: "f807d43b79cac52bd08c86ffc6ef33b6",
-};
+interface Preferences {
+  host: string;
+  port: string;
+  rpcSecret: string;
+  path: string;
+  secure: boolean;
+  secret: string;
+}
 
-export { defaultPreferences, DownloadStatus };
-export type { DownloadItem, Preferences };
+export { Status };
+export type { Download, Task, Preferences };

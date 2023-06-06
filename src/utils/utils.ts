@@ -1,6 +1,6 @@
-import { DownloadStatus } from "../types";
+import { Status } from "../Types";
 
-export function getDownloadIcon(status: DownloadStatus): string {
+export function getTaskIcon(status: Status): string {
     switch (status) {
         case "active":
             return "▶️";
@@ -38,7 +38,7 @@ export function formatProgress(completedLength: string, totalLength: string): st
 }
 
 export function formatRemainingTime(seconds: number): string {
-    const remainingSeconds = seconds;
+    const remainingSeconds = Math.floor(seconds);
     const hours = Math.floor(remainingSeconds / 3600);
     const minutes = Math.floor((remainingSeconds % 3600) / 60);
     const secondsLeft = remainingSeconds % 60;

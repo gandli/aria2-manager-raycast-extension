@@ -14,11 +14,12 @@
       "mode": "view",
       "preferences": [
         {
-          "name": "hostname",
+          "name": "host",
           "title": "Host Name",
-          "description": "Hostname of the Aria2 server",
+          "description": "Host of the Aria2 server",
           "type": "textfield",
           "placeholder": "localhost",
+          "default": "192.168.2.1",
           "required": true
         },
         {
@@ -27,14 +28,34 @@
           "description": "Port number of the Aria2 server",
           "type": "textfield",
           "placeholder": "6800",
+          "default": "6800",
           "required": true
         },
         {
-          "name": "rpcSecret",
+          "name": "secure",
+          "title": "Secure",
+          "description": "Whether to use secure connection",
+          "type": "checkbox",
+          "label": "Use Secure Connection",
+          "default": true,
+          "required": true
+        },
+        {
+          "name": "secret",
           "title": "RPC Secret",
           "description": "Secret key for authenticating with the Aria2 server",
           "type": "password",
           "placeholder": "Secret Key",
+          "default": "f807d43b79cac52bd08c86ffc6ef33b6",
+          "required": true
+        },
+        {
+          "name": "path",
+          "title": "Path",
+          "description": "Path to the Aria2 server",
+          "type": "textfield",
+          "placeholder": "/jsonrpc",
+          "default": "/jsonrpc",
           "required": true
         }
       ]
@@ -42,6 +63,8 @@
   ],
   "dependencies": {
     "@raycast/api": "^1.52.1",
+    "aria2": "^4.1.2",
+    "node-fetch": "^3.3.1",
     "ws": "^8.13.0"
   },
   "devDependencies": {
