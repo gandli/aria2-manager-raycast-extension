@@ -20,19 +20,29 @@ export default function Command() {
         await aria2.open();
         console.log("Connection to aria2 server is open");
 
-        const activeTaskResponse = await aria2.call("tellActive");
-        const waitingTaskResponse = await aria2.call("tellWaiting", 0, 99);
-        const stoppedTaskResponse = await aria2.call("tellStopped", 0, 99);
+        const fetchAndUpdateTasks = async () => {
+          const activeTaskResponse = await aria2.call("tellActive");
+          const waitingTaskResponse = await aria2.call("tellWaiting", 0, 99);
+          const stoppedTaskResponse = await aria2.call("tellStopped", 0, 99);
 
-        const activeTasks = formatTasks(activeTaskResponse);
-        const waitingTasks = formatTasks(waitingTaskResponse);
-        const stoppedTasks = formatTasks(stoppedTaskResponse);
+          const activeTasks = formatTasks(activeTaskResponse);
+          const waitingTasks = formatTasks(waitingTaskResponse);
+          const stoppedTasks = formatTasks(stoppedTaskResponse);
 
-        const updatedTasks: Task[] = [...activeTasks, ...waitingTasks, ...stoppedTasks];
-        setTasks(updatedTasks);
+          const updatedTasks: Task[] = [...activeTasks, ...waitingTasks, ...stoppedTasks];
+          setTasks(updatedTasks);
+        };
 
-        await aria2.close();
-        console.log("Connection to aria2 server is closed");
+        // 初始化获取一次活动任务
+        await fetchAndUpdateTasks();
+
+        // 每隔一定时间获取活动任务并更新状态
+        const interval = setInterval(fetchAndUpdateTasks, 1000);
+
+        // 在组件卸载时清除定时器
+        return () => {
+          clearInterval(interval);
+        };
       } catch (error) {
         console.error("Failed to connect to aria2 server:", error);
       }
