@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import TasksList from "./components/TasksList";
 import useAria2 from "./hooks/useAria2";
 import { Task, Filter } from "./types";
@@ -8,36 +8,38 @@ export default function Command() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [filter, setFilter] = useState<Filter>(Filter.All);
 
+  const filterTasks = useCallback(
+    (filter: Filter): Task[] => {
+      return tasks.filter((task) => {
+        if (filter === Filter.Active) {
+          return task.status === "active";
+        } else if (filter === Filter.Waiting) {
+          return task.status === "waiting";
+        } else if (filter === Filter.CompletePaused) {
+          return ["complete", "paused"].includes(task.status);
+        } else {
+          return true;
+        }
+      });
+    },
+    [tasks]
+  );
+
   useEffect(() => {
-    const fetchData = async () => {
-      if (isConnected) {
+    if (isConnected) {
+      const fetchData = async () => {
         const tasks = await fetchTasks();
         setTasks(tasks);
-      }
-    };
-
-    fetchData();
+      };
+      fetchData();
+    }
   }, [fetchTasks, isConnected]);
 
-  const filteredTasks = useMemo(() => filterTasks(filter), [filter, tasks]);
+  const filteredTasks = useMemo(() => filterTasks(filter), [filter, filterTasks]);
 
-  const handleFilterChange = (filter: Filter) => {
+  const handleFilterChange = useCallback((filter: Filter) => {
     setFilter(filter);
-  };
-
-  function filterTasks(filter: Filter): Task[] {
-    return tasks.filter((task) => {
-      if (filter === Filter.Active) {
-        return task.status === "active";
-      } else if (filter === Filter.Waiting) {
-        return task.status === "waiting";
-      } else if (filter === Filter.CompletePaused) {
-        return ["complete", "paused"].includes(task.status);
-      } else {
-        return true;
-      }
-    });
-  }
+  }, []);
 
   return <TasksList tasks={filteredTasks} onFilterChange={handleFilterChange} />;
 }
