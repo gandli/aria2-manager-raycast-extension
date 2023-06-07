@@ -7,6 +7,7 @@ export default function Command() {
   const { fetchTasks, isConnected } = useAria2();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [filter, setFilter] = useState<Filter>(Filter.All);
+  const [isLoading, setIsLoading] = useState(true);
 
   const filterTasks = useCallback(
     (filter: Filter): Task[] => {
@@ -28,8 +29,10 @@ export default function Command() {
   useEffect(() => {
     if (isConnected) {
       const fetchData = async () => {
+        setIsLoading(true);
         const tasks = await fetchTasks();
         setTasks(tasks);
+        setIsLoading(false);
       };
       fetchData();
     }
@@ -41,5 +44,5 @@ export default function Command() {
     setFilter(filter);
   }, []);
 
-  return <TasksList tasks={filteredTasks} onFilterChange={handleFilterChange} />;
+  return <TasksList isLoading={isLoading} tasks={filteredTasks} onFilterChange={handleFilterChange} />;
 }
