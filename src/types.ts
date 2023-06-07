@@ -11,12 +11,12 @@ interface File {
   completedLength: string;
   index: string;
   length: string;
-  path: string;
+  path: string; //任务名称
   selected: string;
   uris: any[];
 }
 
-interface Download {
+interface TaskResponse {
   gid: string;
   status: Status;
   totalLength: string;
@@ -35,11 +35,11 @@ interface Download {
   following?: string;
   belongsTo?: string;
   dir?: string;
-  files?: File[];
-  bittorrent?: {
+  files: File[];
+  bittorrent: {
     announceList: string[][];
     info: {
-      name: string;
+      name: string; // 任务名称
     };
     mode: string;
   };
@@ -57,12 +57,11 @@ interface Task {
 
 interface Preferences {
   host: string;
-  port: string;
-  rpcSecret: string;
+  port: number;
+  secret: string;
   path: string;
   secure: boolean;
-  secret: string;
 }
 
 export { Status };
-export type { Download, Task, Preferences };
+export type { TaskResponse, Task, Preferences };

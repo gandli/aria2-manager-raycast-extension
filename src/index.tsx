@@ -1,102 +1,73 @@
-import { TasksList } from "./components";
-import { Status, Task } from "./Types";
-import { useEffect, useState } from "react";
-
-type State = {
-  filter: Status | "all";
-  isLoading: boolean;
-  tasks: Task[];
-  visibleTasks: Task[];
-};
+import { useState, useEffect } from "react";
+import Aria2 from "aria2";
+import ws from "ws";
+import nodefetch from "node-fetch";
+import { getPreferenceValues } from "@raycast/api";
+import { Preferences, Task } from "./types";
+import { formatTasks, getTaskIcon } from "./utils/utils";
+import { List } from "@raycast/api";
 
 export default function Command() {
-  const [state, setState] = useState<State>({
-    filter: Status.Active,
-    isLoading: true,
-    tasks: [],
-    visibleTasks: [],
-  });
+  const [tasks, setTasks] = useState<Task[]>([]);
 
+  // 在 useEffect 钩子中获取任务数据并更新 tasks 状态
   useEffect(() => {
-    const tasks: Task[] = [
-      {
-        gid: "1",
-        fileName: "File 1",
-        fileSize: "100MB",
-        progress: "50%",
-        status: Status.Active,
-        downloadSpeed: "10MB/s",
-        remainingTime: "5 minutes",
-      },
-      {
-        gid: "2",
-        fileName: "File 2",
-        fileSize: "200MB",
-        progress: "75%",
-        status: Status.Waiting,
-      },
-      {
-        gid: "3",
-        fileName: "File 3",
-        fileSize: "150MB",
-        progress: "25%",
-        status: Status.Paused,
-      },
-      {
-        gid: "4",
-        fileName: "File 4",
-        fileSize: "300MB",
-        progress: "100%",
-        status: Status.Complete,
-      },
-      {
-        gid: "5",
-        fileName: "File 5",
-        fileSize: "250MB",
-        progress: "90%",
-        status: Status.Error,
-      },
-      {
-        gid: "6",
-        fileName: "File 6",
-        fileSize: "180MB",
-        progress: "10%",
-        status: Status.Removed,
-      },
-    ];
+    async function fetchTasks() {
+      const options = getPreferenceValues<Preferences>();
+      const aria2 = new Aria2({ WebSocket: ws, fetch: nodefetch, ...options });
 
-    const visibleTasks = tasks.filter((item) => {
-      return item.status === state.filter;
-    });
+      try {
+        await aria2.open();
+        console.log("Connection to aria2 server is open");
 
-    setState((previous) => ({
-      ...previous,
-      tasks,
-      visibleTasks,
-      isLoading: false,
-    }));
-  }, []);
+        const activeTaskResponse = await aria2.call("tellActive");
+        const waitingTaskResponse = await aria2.call("tellWaiting", 0, 99);
+        const stoppedTaskResponse = await aria2.call("tellStopped", 0, 99);
 
-  const filterTasks = (filter: Status | "all") => {
-    const { tasks } = state;
-    let visibleTasks = tasks;
+        const activeTasks = formatTasks(activeTaskResponse);
+        const waitingTasks = formatTasks(waitingTaskResponse);
+        const stoppedTasks = formatTasks(stoppedTaskResponse);
 
-    if (filter !== "all") {
-      visibleTasks = visibleTasks.filter((item) => item.status === filter);
+        const updatedTasks: Task[] = [...activeTasks, ...waitingTasks, ...stoppedTasks];
+        setTasks(updatedTasks);
+
+        await aria2.close();
+        console.log("Connection to aria2 server is closed");
+      } catch (error) {
+        console.error("Failed to connect to aria2 server:", error);
+      }
     }
 
-    setState((previous) => ({
-      ...previous,
-      visibleTasks,
-      filter,
-    }));
-  };
+    fetchTasks();
+  }, []);
+
   return (
-    <TasksList
-      isLoading={state.isLoading}
-      tasks={state.visibleTasks}
-      filter={state.filter}
-      onFilterChange={filterTasks}
-    />
+    <List>
+      {tasks.map((task) => {
+        const accessories = [];
+        if (task.status === "active" && task.progress !== "100.00%") {
+          accessories.push(
+            { tooltip: "Download Speed", text: ` ${task.downloadSpeed}`, icon: "🚀" },
+            { tooltip: "Remaining Time", text: `${task.remainingTime}`, icon: "🕐" }
+          );
+        }
+
+        accessories.push({ tooltip: "Progress", text: ` ${task.progress}`, icon: "⏳" });
+
+        return (
+          <List.Item
+            icon={getTaskIcon(task.status)}
+            key={task.gid}
+            id={task.gid}
+            title={{
+              tooltip: "Task Name",
+              value: task.fileName,
+            }}
+            subtitle={{ tooltip: "File Size", value: `💾${task.fileSize}` }}
+            accessories={accessories}
+          />
+        );
+      })}
+    </List>
   );
 }

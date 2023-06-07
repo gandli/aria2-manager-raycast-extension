@@ -1,5 +1,5 @@
 import { List, ActionPanel } from "@raycast/api";
-import { Task, Status } from "../Types";
+import { Task, Status } from "../types";
 import CreateTaskAction from "./CreateTaskAction";
 
 function TasksList(props: {
