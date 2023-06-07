@@ -16,6 +16,8 @@ This Raycast extension provides functionality to manage and monitor Aria2 downlo
 - Show task name, file size, and progress
 - Quick action buttons to manage download tasks (pause, resume, delete, etc.)
 
+![Screen](./metadata/aria2-1.png)
+
 ## Installation
 
 1. Make sure you have Raycast app installed and set up.
