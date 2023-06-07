@@ -56,7 +56,7 @@ If you find any issues or have suggestions for improvements, feel free to raise 
 
 ## License
 
-This extension is open source and released under the MIT License. For more details, see the [LICENSE](LICENSE) file.
+This extension is licensed under the [MIT License](https://opensource.org/licenses/MIT).
 
 ---
 
