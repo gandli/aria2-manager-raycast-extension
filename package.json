@@ -1,7 +1,7 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
   "name": "aria2",
-  "title": "aria2",
+  "title": "Aria2",
   "description": "The Aria2 extension for Raycast enables users to manage Aria2 downloads directly from the Raycast command bar.",
   "icon": "icon.png",
   "author": "gandli",
@@ -9,7 +9,7 @@
   "commands": [
     {
       "name": "index",
-      "title": "aria2",
+      "title": "Aria2",
       "description": "inThe Aria2 extension for Raycast enables users to manage Aria2 downloads directly from the Raycast command bar.",
       "mode": "view",
       "preferences": [
