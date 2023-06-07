@@ -19,7 +19,7 @@
           "description": "Host of the Aria2 server",
           "type": "textfield",
           "placeholder": "localhost",
-          "default": "192.168.2.1",
+          "default": "localhost",
           "required": true
         },
         {
@@ -46,7 +46,7 @@
           "description": "Secret key for authenticating with the Aria2 server",
           "type": "password",
           "placeholder": "Secret Key",
-          "default": "f807d43b79cac52bd08c86ffc6ef33b6",
+          "default": "",
           "required": true
         },
         {
