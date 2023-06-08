@@ -1,6 +1,6 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
-  "name": "aria2-manager",
+  "name": "aria2",
   "title": "Aria2 Manager",
   "description": "Manage Aria2 downloads directly from the Raycast.",
   "icon": "icon.png",
