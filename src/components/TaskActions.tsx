@@ -37,6 +37,7 @@ function TaskActions({ gid, infoHash }: Props) {
       <Action
         title="Remove Task"
         icon={Icon.Trash}
+        style={Action.Style.Destructive}
         shortcut={{ modifiers: ["cmd"], key: "r" }}
         onAction={() => {
           console.log("gid=>", gid);
@@ -45,7 +46,7 @@ function TaskActions({ gid, infoHash }: Props) {
       />
       <Action.CopyToClipboard
         title="Copy Link"
-        content={`magnet:?xt=urn:btih:${infoHash}`}
+        content={`magnet:?xt=urn:btih:${infoHash}`} //TODO： 这里需要使用URI属性，下次修改它
         shortcut={{ modifiers: ["cmd"], key: "c" }}
       />
     </ActionPanel>
