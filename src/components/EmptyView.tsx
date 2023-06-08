@@ -1,4 +1,4 @@
-import { List, ActionPanel, Action, Icon, Color } from "@raycast/api";
+import { List, ActionPanel, Action, Icon } from "@raycast/api";
 import CreateTaskForm from "./CreateTaskForm";
 
 function EmptyView() {

@@ -1,6 +1,6 @@
-import { ActionPanel, Form, Action } from "@raycast/api";
-import { useState, useMemo } from "react";
-
+import { ActionPanel, Form, Action, useNavigation } from "@raycast/api";
+import { useState, useMemo, useCallback } from "react";
+import useAria2 from "../hooks/useAria2";
 const HTTP_REGEX = /^(http|https|ftp):\/\/[^\s]+/;
 const MAGNET_REGEX = /^magnet:\?xt=urn:btih:[a-f0-9]{40,}/;
 
@@ -12,6 +12,8 @@ ftp://example.com/files/document.pdf
 
   const [taskLinkArray, setTaskLinkArray] = useState<string[]>([]);
   const [error, setError] = useState<string | undefined>(undefined);
+  const { addDownloadTask } = useAria2();
+  const { pop } = useNavigation();
 
   const handleChange = (newValue: string) => {
     const links = newValue.split("\n");
@@ -26,23 +28,31 @@ ftp://example.com/files/document.pdf
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
     const invalidLinks = validateLinks(taskLinkArray);
     if (invalidLinks.length === 0) {
-      setTaskLinkArray([]);
+      addDownloadTask(taskLinkArray)
+        .then(() => {
+          setTaskLinkArray([]);
+          setError(undefined);
+          pop();
+        })
+        .catch((error) => {
+          console.error("Failed to add download task:", error);
+        });
     } else {
       const errorLines = invalidLinks.join(", ");
       const errorMessage = `Invalid links at lines: ${errorLines}`;
       setError(errorMessage);
     }
-  };
+  }, [taskLinkArray, addDownloadTask, pop]);
 
   const validateLinks = (links: string[]) => {
     const invalidLinks = [];
     for (let i = 0; i < links.length; i++) {
       const trimmedLink = links[i].trim();
       if (!(HTTP_REGEX.test(trimmedLink) || MAGNET_REGEX.test(trimmedLink))) {
-        invalidLinks.push(i + 1); // store the line number of the invalid link
+        invalidLinks.push(i + 1);
       }
     }
     return invalidLinks;

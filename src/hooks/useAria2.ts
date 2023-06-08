@@ -10,7 +10,7 @@ type Aria2Client = {
   client: Aria2 | null;
   isConnected: boolean;
   fetchTasks: () => Promise<Task[]>;
-  addDownloadTask: (url: string) => Promise<void>;
+  addDownloadTask: (urls: string[]) => Promise<void>;
   removeTask: (taskId: string) => Promise<void>;
   pauseTask: (taskId: string) => Promise<void>;
   restartTask: (taskId: string) => Promise<void>;
@@ -68,29 +68,31 @@ const useAria2 = (): Aria2Client => {
   }, [client]);
 
   const addDownloadTask = useCallback(
-    async (url: string): Promise<void> => {
+    async (urls: string[]): Promise<void> => {
       if (!client) {
         throw new Error("Aria2 client is not available");
       }
 
       try {
-        // 判断 url 的类型
-        const isTorrent = url.endsWith(".torrent");
-        const isMetalink = url.endsWith(".metalink");
+        const tasks: Promise<void>[] = [];
 
-        if (isTorrent) {
-          // 如果是 Torrent 文件，使用 addTorrent 方法添加任务
-          await client.call("addTorrent", Buffer.from(url).toString("base64"));
-          console.log("Added torrent download task:", url);
-        } else if (isMetalink) {
-          // 如果是 Metalink 文件，使用 addMetalink 方法添加任务
-          await client.call("addMetalink", Buffer.from(url).toString("base64"));
-          console.log("Added metalink download task:", url);
-        } else {
-          // 否则，使用 addUri 方法添加任务
-          await client.call("addUri", [url]);
-          console.log("Added download task:", url);
+        for (const url of urls) {
+          const isTorrent = url.endsWith(".torrent");
+          const isMetalink = url.endsWith(".metalink");
+
+          if (isTorrent) {
+            tasks.push(client.call("addTorrent", Buffer.from(url).toString("base64")));
+            console.log("Added torrent download task:", url);
+          } else if (isMetalink) {
+            tasks.push(client.call("addMetalink", Buffer.from(url).toString("base64")));
+            console.log("Added metalink download task:", url);
+          } else {
+            tasks.push(client.call("addUri", [url]));
+            console.log("Added download task:", url);
+          }
         }
+
+        await Promise.all(tasks);
       } catch (error) {
         console.error("Failed to add download task:", error);
       }

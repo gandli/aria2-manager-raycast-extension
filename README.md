@@ -50,6 +50,19 @@ Using the Aria2 extension is straightforward. Here are some common commands you 
 
 You can use these commands in Raycast to manage and monitor your Aria2 download tasks. The extension also provides an interactive interface for additional operations.
 
+## 🧪 Test
+To test the Aria2 extension locally, follow these steps:
+
+Install Aria2 using Homebrew:
+shell
+Copy code
+brew install aria2
+Start the Aria2 server with RPC enabled:
+shell
+Copy code
+aria2c --enable-rpc --rpc-listen-all
+Now you can use the extension in Raycast to manage and monitor your Aria2 download tasks with the configured connection settings.
+```
 ## 🤝 Contribution
 
 If you encounter any issues or have suggestions for improvements, feel free to raise an Issue or submit a Pull Request. We welcome your contributions to make this extension even better! 🙌
