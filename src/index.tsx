@@ -2,10 +2,13 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { TasksList } from "./components";
 import useAria2 from "./hooks/useAria2";
 import { Task, Filter, Status } from "./types";
+import { isAria2Installed } from "./utils/checkInstall";
 
 const REFRESH_INTERVAL = 1000;
 
 export default function Command() {
+  isAria2Installed();
+
   const { fetchTasks, isConnected, handleNotification } = useAria2();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [filter, setFilter] = useState<Filter>(Filter.All);
